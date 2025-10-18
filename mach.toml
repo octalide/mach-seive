@@ -1,0 +1,15 @@
+[project]
+name = "seive"
+version = "0.0.1"
+entrypoint = "main.mach"
+
+[directories]
+src-dir = "src"
+dep-dir = "dep"
+out-dir = "out"
+
+[deps]
+std = { path = "dep/mach-std", src = "src" }
+
+[modules]
+std = "std"
