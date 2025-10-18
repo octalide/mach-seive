@@ -7,7 +7,7 @@ It is not meant to be a useful or efficient implementation, but rather a demonst
 This project demonstrates the intended structure of a mach project, including
 the use of dependencies (of which the standard library is one).
 
-The (`mach-c` compiler)[https://github.com/octalide/mach-c] is required to build this project.
+The [`mach-c` compiler](https://github.com/octalide/mach-c) is required to build this project.
 
 # Building
 
