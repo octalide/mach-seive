@@ -57,6 +57,7 @@ fun main(args: []string) i64 {
 
     # collect indices of primes (the prime numbers themselves)
     var indices: List<u64> = with_capacity<u64>(1);
+    var i: u64 = 0;
     for (i < primes.len) {
         # skip 0 and 1
         if (i <= 1) { cnt; }
