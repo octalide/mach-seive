@@ -3,13 +3,21 @@ use          std.types.string;
 use          std.types.bool;
 use          std.text.parse;
 use          std.types.list;
+use          std.types.result;
+use          std.types.option;
 use console: std.io.console;
 use mem:     std.system.memory;
 use time:    std.system.time;
 
-fun seive(lower: u64, upper: u64) []bool {
-    val size: u64 = upper - lower;
-    val primes: []bool = mem.alloc<bool>(size);
+fun seive(lower: u64, upper: u64) Result<[]bool, string> {
+    val size:   u64 = upper - lower;
+    var primes: []bool;
+    primes.data = mem.alloc<bool>(size);
+    primes.len  = size;
+
+    if (primes.data == nil) {
+        ret err<[]bool, string>("failed to allocate memory for sieve");
+    }
 
     # initialize all entries as true
     var i: u64 = 0;
@@ -22,57 +30,112 @@ fun seive(lower: u64, upper: u64) []bool {
     i = lower;
     for (i < upper) {
         if (i < 2) {
+            i = i + 1;
+            cnt;
+        }
+
+        if (i == 2) {
+            # 2 is prime, skip it
+            i = i + 1;
             cnt;
         }
 
         if (i % 2 == 0) {
-            primes[i] = false;
+            # even numbers (except 2) are not prime
+            primes[i - lower] = false;
+            i = i + 1;
+            cnt;
+        }
+
+        # if this number is already marked as not prime, skip it
+        if (primes[i - lower] == false) {
+            i = i + 1;
             cnt;
         }
 
         # remove multiples of the current number
         var j: u64 = i * i;
         for (j < upper) {
-            primes[j] = false;
+            primes[j - lower] = false;
             j = j + i;
         }
+
+        i = i + 1;
     }
 
-    ret primes;
+    ret ok<[]bool, string>(primes);
 }
 
 #@symbol("main")
 fun main(args: []string) i64 {
-    var limit: u64 = 100000000;
+    var limit: u64 = 10000000;
+    console.print("usage: %s [limit] (default: %u)\n", args[0], limit);
 
     if (args.len > 1) {
         limit = parse_u64_dec(args[1]);
     }
 
-    console.print("finding primes up to %d\n", limit);
+    console.print("finding primes up to %u\n", limit);
 
-    val start:  u64    = time.now();
-    val primes: []bool = seive(0, limit);
-    val end:    u64    = time.now();
+    val start:     u64                    = time.now();
+    val res_seive: Result<[]bool, string> = seive(0, limit);
+    val end:       u64                    = time.now();
 
-    # collect indices of primes (the prime numbers themselves)
-    var indices: List<u64> = with_capacity<u64>(1);
-    var i: u64 = 0;
-    for (i < primes.len) {
-        # skip 0 and 1
-        if (i <= 1) { cnt; }
-
-        if (primes[i] == true) {
-            indices.push(i);
-        }
+    if (res_seive.is_err()) {
+        console.print("error: %s\n", res_seive.unwrap_err());
+        ret 1;
     }
 
-    console.print("found %d primes\n", indices.len);
-    console.print("time taken: %d ns\n", end - start);
+    val primes: []bool = res_seive.unwrap_ok();
+
+    # collect indices of primes (the prime numbers themselves)
+    var res_list_new: Result<List<u64>, string> = list_new<u64>(1);
+    if (res_list_new.is_err()) {
+        console.print("error: %s\n", res_list_new.unwrap_err());
+        ret 1;
+    }
+
+    val indices: List<u64> = res_list_new.unwrap_ok();
+
+    var i: u64 = 0;
+    for (i < primes.len) {
+        val actual_num: u64 = i;
+        
+        # skip 0 and 1
+        if (actual_num <= 1) { 
+            i = i + 1;
+            cnt; 
+        }
+
+        if (primes[i] == true) {
+            val err: Option<string> = indices.push(actual_num);
+            if (err.is_some()) {
+                console.print("error: %s\n", err.unwrap());
+                ret 1;
+            }
+        }
+        
+        i = i + 1;
+    }
+
+    console.print("found:       %u\n", indices.len);
+    console.print("time taken:  %u ns\n", end - start);
 
     if (indices.len > 0) {
-        console.print("first prime: %d\n", indices[0]);
-        console.print("last prime:  %d\n", indices[indices.len - 1]);
+        val opt_first: Option<u64> = indices.get(0);
+        if (opt_first.is_none()) {
+            console.print("error retrieving first prime\n");
+            ret 1;
+        }
+
+        val opt_last: Option<u64> = indices.get(indices.len - 1);
+        if (opt_last.is_none()) {
+            console.print("error retrieving last prime\n");
+            ret 1;
+        }
+
+        console.print("first prime: %u\n", opt_first.unwrap());
+        console.print("last prime:  %u\n", opt_last.unwrap());
     }
 
     ret 0;
