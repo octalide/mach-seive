@@ -41,6 +41,12 @@ fun seive(lower: u64, upper: u64) Result<[]bool, string> {
             cnt;
         }
 
+        # if this number is already marked as not prime, skip it
+        if (primes[i - lower] == false) {
+            i = i + 1;
+            cnt;
+        }
+
         # remove multiples of the current number
         var j: u64 = i * i;
         for (j < upper) {
