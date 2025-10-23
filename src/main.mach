@@ -68,7 +68,7 @@ fun seive(lower: u64, upper: u64) Result<[]bool, string> {
 
 #@symbol("main")
 fun main(args: []string) i64 {
-    var limit: u64 = 10000000;
+    var limit: u64 = 100000000;
     console.print("usage: %s [limit] (default: %u)\n", args[0], limit);
 
     if (args.len > 1) {
@@ -89,7 +89,7 @@ fun main(args: []string) i64 {
     val primes: []bool = res_seive.unwrap_ok();
 
     # collect indices of primes (the prime numbers themselves)
-    var res_list_new: Result<List<u64>, string> = list_new<u64>(1);
+    var res_list_new: Result<List<u64>, string> = list_new<u64>(limit / 10);
     if (res_list_new.is_err()) {
         console.print("error: %s\n", res_list_new.unwrap_err());
         ret 1;
@@ -99,16 +99,14 @@ fun main(args: []string) i64 {
 
     var i: u64 = 0;
     for (i < primes.len) {
-        val actual_num: u64 = i;
-        
         # skip 0 and 1
-        if (actual_num <= 1) { 
+        if (i <= 1) { 
             i = i + 1;
             cnt;
         }
 
         if (primes[i] == true) {
-            val err: Option<string> = indices.push(actual_num);
+            val err: Option<string> = indices.push(i);
             if (err.is_some()) {
                 console.print("error: %s\n", err.unwrap());
                 ret 1;
