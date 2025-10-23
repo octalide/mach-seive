@@ -1,39 +1,26 @@
 # paths
 CMACH     ?= $(CMACH_BIN)/cmach
 
-# dirs
-OUT_DIR := out
-BIN_DIR := $(OUT_DIR)/bin
-OBJ_DIR := $(OUT_DIR)/obj
-
 # sources
 SRC      := src/main.mach
-OBJ      := $(OBJ_DIR)/main.o
+BIN_DIR  := out/bin
+OBJ_DIR  := out/obj
 EXE      := $(BIN_DIR)/seive
 
 .PHONY: all run clean print
 
 all: $(EXE)
 
-$(EXE): $(OBJ) | $(BIN_DIR)
+$(EXE): | $(BIN_DIR)
 	@echo exe = $@
-	@OBJS="$$(find $(OBJ_DIR) -type f -name '*.o' -print 2>/dev/null)"; cc -nostartfiles -nostdlib -no-pie -o $@ $$OBJS
-
-$(OBJ): $(SRC) | $(OBJ_DIR)
-	@$(CMACH) build $< --emit-obj --no-link -o $@
+# 	this is a bit hacky, but only because cmach is currently stupid
+	@$(CMACH) build $(SRC) -I src -M seive=src --obj-dir=$(OBJ_DIR) --dep-dir=$(OBJ_DIR) --emit-ir --emit-asm --emit-ast -o $@
 
 $(BIN_DIR):
 	@mkdir -p $(BIN_DIR)
-
-$(OBJ_DIR):
-	@mkdir -p $(OBJ_DIR)
 
 run: $(EXE)
 	@$(EXE)
 
 clean:
-	rm -rf $(OUT_DIR)
-
-print:
-	@echo cmach = $(CMACH)
-	@echo exe   = $(EXE)
+	rm -rf out

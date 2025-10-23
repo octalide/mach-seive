@@ -4,8 +4,8 @@ version = "0.0.1"
 entrypoint = "main.mach"
 
 [directories]
-src-dir = "src"
-out-dir = "out"
+src = "src"
+out = "out"
 
 [deps]
 std = "../mach/std"
