@@ -1,5 +1,5 @@
 # paths
-CMACH     ?= ../mach-c/bin/cmach
+CMACH     ?= $(CMACH_BIN)/cmach
 
 # dirs
 OUT_DIR := out

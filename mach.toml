@@ -8,4 +8,4 @@ src-dir = "src"
 out-dir = "out"
 
 [deps]
-std = { path = "dep/mach-std", src = "src" }
+std = "../mach/std"

@@ -104,7 +104,7 @@ fun main(args: []string) i64 {
         # skip 0 and 1
         if (actual_num <= 1) { 
             i = i + 1;
-            cnt; 
+            cnt;
         }
 
         if (primes[i] == true) {
