@@ -29,13 +29,7 @@ fun seive(lower: u64, upper: u64) Result<[]bool, string> {
     # mark non-primes
     i = lower;
     for (i < upper) {
-        if (i < 2) {
-            i = i + 1;
-            cnt;
-        }
-
-        if (i == 2) {
-            # 2 is prime, skip it
+        if (i <= 2) {
             i = i + 1;
             cnt;
         }
@@ -43,12 +37,6 @@ fun seive(lower: u64, upper: u64) Result<[]bool, string> {
         if (i % 2 == 0) {
             # even numbers (except 2) are not prime
             primes[i - lower] = false;
-            i = i + 1;
-            cnt;
-        }
-
-        # if this number is already marked as not prime, skip it
-        if (primes[i - lower] == false) {
             i = i + 1;
             cnt;
         }
