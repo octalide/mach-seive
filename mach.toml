@@ -1,11 +1,21 @@
 [project]
-name = "seive"
-version = "0.0.1"
-entrypoint = "main.mach"
-
-[directories]
+name = "mach"
+version = "0.2.0"
 src = "src"
-out = "out"
+target = "native"
 
-[deps]
-std = "../mach/std"
+[dependencies]
+std = "${MACH_HOME}/std"
+
+[targets.linux]
+triple = "x86_64-pc-linux-gnu"
+entrypoint = "main.mach"
+artifacts = "out/linux"
+out = "out/bin/seive"
+opt-level = 2
+emit-ast = true
+emit-ir = true
+emit-asm = true
+emit-object = true
+build-library = false
+no-pie = false
