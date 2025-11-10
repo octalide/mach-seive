@@ -9,15 +9,17 @@ use console: std.io.console;
 use mem:     std.system.memory;
 use time:    std.system.time;
 
-fun seive(lower: u64, upper: u64) Result[[]bool, string] {
+fun seive(lower: u64, upper: u64) Result[[]bool, str] {
     val size:   u64 = upper - lower;
     var primes: []bool;
-    primes.data = mem.alloc[bool](size);
     primes.len  = size;
 
-    if (primes.data == nil) {
-        ret err[[]bool, string]("failed to allocate memory for sieve");
+    val res_alloc: Option[*bool] = mem.allocate[bool](size);
+    if (res_alloc.is_none()) {
+        ret err[[]bool, str]("failed to allocate memory for primes array");
     }
+
+    primes.data = res_alloc.unwrap();
 
     # initialize all entries as true
     var i: u64 = 0;
@@ -57,11 +59,11 @@ fun seive(lower: u64, upper: u64) Result[[]bool, string] {
         i = i + 1;
     }
 
-    ret ok[[]bool, string](primes);
+    ret ok[[]bool, str](primes);
 }
 
 $main.symbol = "main";
-fun main(args: []string) i64 {
+fun main(args: []str) i64 {
     var limit: u64 = 100000000;
     console.print("usage: %s [limit] (default: %u)\n", args[0], limit);
 
@@ -72,7 +74,7 @@ fun main(args: []string) i64 {
     console.print("finding primes up to %u\n", limit);
 
     val start:     u64                    = time.now();
-    val res_seive: Result[[]bool, string] = seive(0, limit);
+    val res_seive: Result[[]bool, str] = seive(0, limit);
     val end:       u64                    = time.now();
 
     if (res_seive.is_err()) {
@@ -83,7 +85,7 @@ fun main(args: []string) i64 {
     val primes: []bool = res_seive.unwrap_ok();
 
     # collect indices of primes (the prime numbers themselves)
-    var res_list_new: Result[List[u64], string] = list_new[u64](limit / 10);
+    var res_list_new: Result[List[u64], str] = list_new[u64](limit / 10);
     if (res_list_new.is_err()) {
         console.print("error: %s\n", res_list_new.unwrap_err());
         ret 1;
@@ -100,7 +102,7 @@ fun main(args: []string) i64 {
         }
 
         if (primes[i] == true) {
-            val err: Option[string] = indices.push(i);
+            val err: Option[str] = indices.push(i);
             if (err.is_some()) {
                 console.print("error: %s\n", err.unwrap());
                 ret 1;

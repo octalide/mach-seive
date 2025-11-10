@@ -1,6 +1,7 @@
 [project]
-name = "mach"
-version = "0.2.0"
+id = "seive"
+name = "Mach Seive"
+version = "0.3.0"
 src = "src"
 target = "native"
 
