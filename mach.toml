@@ -6,7 +6,8 @@ src = "src"
 target = "native"
 
 [dependencies]
-std = "${MACH_HOME}/std"
+# std = "${MACH_HOME}/std"
+std = "../mach/std"
 
 [targets.linux]
 triple = "x86_64-pc-linux-gnu"
@@ -20,3 +21,17 @@ emit-asm = true
 emit-object = true
 build-library = false
 no-pie = false
+
+[targets.windows]
+triple = "x86_64-pc-windows-msvc"
+entrypoint = "main.mach"
+artifacts = "out/windows"
+out = "out/bin/seive.exe"
+opt-level = 2
+emit-ast = true
+emit-ir = true
+emit-asm = true
+emit-object = true
+build-library = false
+no-pie = false
+link = ["kernel32.lib", "shell32.lib"]
