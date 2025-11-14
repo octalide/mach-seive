@@ -70,28 +70,33 @@ fun main(args: []str) i64 {
 
     console.print("finding primes up to %u\n", limit);
 
+    # check that limit fits in usize just in case
     val opt_len: usize = limit :: usize;
     if ((opt_len :: u64) != limit) {
         console.print("error: limit is too large for this platform\n");
         ret 1;
     }
 
+    # allocate memory for the sieve
     var opt_allocate: Option[*bool] = mem.allocate[bool](opt_len);
     if (opt_allocate.is_none()) {
         console.print("error: memory allocation failed\n");
         ret 1;
     }
 
+    # create a slice over the allocated memory and initialize all to true
     var primes: []bool;
     primes.data = opt_allocate.unwrap();
     primes.len  = limit;
 
     mem.fill[bool](primes.data, true, limit :: usize);
 
+    # perform the sieve
     val start:     time.Duration = time.now();
     val opt_sieve: Option[str]   = sieve(0, limit, primes);
     val elapsed:   time.Duration = time.since(start);
 
+    # check for errors from the sieve
     if (opt_sieve.is_some()) {
         console.print("error: %s\n", opt_sieve.unwrap());
         ret 1;
