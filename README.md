@@ -1,4 +1,4 @@
-Mach Seive
+Mach Sieve
 ---
 
 An implementation of the eratosthenes sieve algorithm in Mach.
