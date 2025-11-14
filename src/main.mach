@@ -10,7 +10,7 @@ use console: std.io.console;
 use mem:     std.system.memory;
 use time:    std.system.time;
 
-fun seive(lower: u64, upper: u64, primes: []bool) Option[str] {
+fun sieve(lower: u64, upper: u64, primes: []bool) Option[str] {
     if (upper <= lower) {
         ret some[str]("upper bound must be greater than lower bound");
     }
@@ -89,11 +89,11 @@ fun main(args: []str) i64 {
     mem.fill[bool](primes.data, true, limit :: usize);
 
     val start:     time.Duration = time.now();
-    val opt_seive: Option[str]   = seive(0, limit, primes);
+    val opt_sieve: Option[str]   = sieve(0, limit, primes);
     val elapsed:   time.Duration = time.since(start);
 
-    if (opt_seive.is_some()) {
-        console.print("error: %s\n", opt_seive.unwrap());
+    if (opt_sieve.is_some()) {
+        console.print("error: %s\n", opt_sieve.unwrap());
         ret 1;
     }
 

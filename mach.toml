@@ -1,6 +1,6 @@
 [project]
-id = "seive"
-name = "Mach Seive"
+id = "sieve"
+name = "Mach Sieve"
 version = "0.3.0"
 src = "src"
 target = "native"
@@ -13,7 +13,7 @@ std = "../mach/std"
 triple = "x86_64-pc-linux-gnu"
 entrypoint = "main.mach"
 artifacts = "out/linux"
-out = "out/bin/seive"
+out = "out/bin/sieve"
 opt-level = 2
 emit-ast = true
 emit-ir = true
