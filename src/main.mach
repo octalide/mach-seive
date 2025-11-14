@@ -1,4 +1,5 @@
 use          std.runtime;
+use          std.types.size;
 use          std.types.string;
 use          std.types.bool;
 use          std.text.parse;
@@ -9,27 +10,23 @@ use console: std.io.console;
 use mem:     std.system.memory;
 use time:    std.system.time;
 
-fun seive(lower: u64, upper: u64) Result[[]bool, str] {
-    val size:   u64 = upper - lower;
-    var primes: []bool;
-    primes.len  = size;
-
-    val res_alloc: Option[*bool] = mem.allocate[bool](size);
-    if (res_alloc.is_none()) {
-        ret err[[]bool, str]("failed to allocate memory for primes array");
+fun seive(lower: u64, upper: u64, primes: []bool) Option[str] {
+    if (upper <= lower) {
+        ret some[str]("upper bound must be greater than lower bound");
     }
 
-    primes.data = res_alloc.unwrap();
+    val size: u64 = upper - lower;
 
-    # initialize all entries as true
-    var i: u64 = 0;
-    for (i < size) {
-        primes[i] = true;
-        i = i + 1;
+    if (primes.len < size) {
+        ret some[str]("provided buffer size is smaller than required");
+    }
+
+    if (primes.data == nil) {
+        ret some[str]("provided buffer has null data pointer");
     }
 
     # mark non-primes
-    i = lower;
+    var i: u64 = lower;
     for (i < upper) {
         if (i <= 2) {
             i = i + 1;
@@ -59,7 +56,7 @@ fun seive(lower: u64, upper: u64) Result[[]bool, str] {
         i = i + 1;
     }
 
-    ret ok[[]bool, str](primes);
+    ret none[str]();
 }
 
 $main.symbol = "main";
@@ -73,16 +70,32 @@ fun main(args: []str) i64 {
 
     console.print("finding primes up to %u\n", limit);
 
-    val start:     u64                    = time.now();
-    val res_seive: Result[[]bool, str] = seive(0, limit);
-    val end:       u64                    = time.now();
-
-    if (res_seive.is_err()) {
-        console.print("error: %s\n", res_seive.unwrap_err());
+    val opt_len: usize = limit :: usize;
+    if ((opt_len :: u64) != limit) {
+        console.print("error: limit is too large for this platform\n");
         ret 1;
     }
 
-    val primes: []bool = res_seive.unwrap_ok();
+    var opt_allocate: Option[*bool] = mem.allocate[bool](opt_len);
+    if (opt_allocate.is_none()) {
+        console.print("error: memory allocation failed\n");
+        ret 1;
+    }
+
+    var primes: []bool;
+    primes.data = opt_allocate.unwrap();
+    primes.len  = limit;
+
+    mem.fill[bool](primes.data, true, limit :: usize);
+
+    val start:     time.Duration = time.now();
+    val opt_seive: Option[str]   = seive(0, limit, primes);
+    val elapsed:   time.Duration = time.since(start);
+
+    if (opt_seive.is_some()) {
+        console.print("error: %s\n", opt_seive.unwrap());
+        ret 1;
+    }
 
     # collect indices of primes (the prime numbers themselves)
     var res_list_new: Result[List[u64], str] = list_new[u64](limit / 10);
@@ -113,7 +126,7 @@ fun main(args: []str) i64 {
     }
 
     console.print("found:       %u\n", indices.len);
-    console.print("time taken:  %u ns\n", end - start);
+    console.print("time taken:  %u ms\n", elapsed.milliseconds());
 
     if (indices.len > 0) {
         val opt_first: Option[u64] = indices.get(0);
