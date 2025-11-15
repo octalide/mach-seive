@@ -5,33 +5,36 @@ version = "0.3.0"
 src = "src"
 target = "native"
 
-[dependencies]
-# std = "${MACH_HOME}/std"
-std = "../mach/std"
-
 [targets.linux]
 triple = "x86_64-pc-linux-gnu"
 entrypoint = "main.mach"
 artifacts = "out/linux"
-out = "out/bin/sieve"
-opt-level = 2
+output = "out/bin/sieve"
+mode = "executable"
+debug = false
+optimize = true
 emit-ast = true
 emit-ir = true
 emit-asm = true
 emit-object = true
-build-library = false
 no-pie = false
 
 [targets.windows]
 triple = "x86_64-pc-windows-msvc"
 entrypoint = "main.mach"
 artifacts = "out/windows"
-out = "out/bin/seive.exe"
-opt-level = 2
+output = "out/bin/sieve.exe"
+mode = "executable"
+debug = false
+optimize = true
 emit-ast = true
 emit-ir = true
 emit-asm = true
 emit-object = true
-build-library = false
 no-pie = false
 link = ["kernel32.lib", "shell32.lib"]
+
+[deps.mach-std]
+type = "remote"
+path = "https://github.com/octalide/mach-std"
+version = "a38aa378ac26db4b4ec6fd0a1c9f7438974f8496"
