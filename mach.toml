@@ -37,4 +37,4 @@ link = ["kernel32.lib", "shell32.lib"]
 [deps.mach-std]
 type = "remote"
 path = "https://github.com/octalide/mach-std"
-version = "a38aa378ac26db4b4ec6fd0a1c9f7438974f8496"
+version = "branch/main"
