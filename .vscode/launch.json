@@ -5,7 +5,7 @@
       "type": "lldb",
       "request": "launch",
       "name": "Debug Mach Executable",
-      "program": "${workspaceFolder}/out/bin/seive",
+      "program": "${workspaceFolder}/out/bin/sieve",
       "args": [],
       "cwd": "${workspaceFolder}",
       "terminal": "integrated",
