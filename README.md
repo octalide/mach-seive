@@ -14,8 +14,14 @@ You will then need to ensure that the produced `cmach` binary is in your path.
 
 To build the project, run:
 
-```
+```bash
 cmach build .
 ```
 
-This will compile the source files and place the resulting binary in the `out/bin/` directory.
+This will compile the source files and place the resulting binary in the `out/<target>/bin/` directory.
+
+You can also run the project after building with:
+
+```bash
+cmach run .
+```
